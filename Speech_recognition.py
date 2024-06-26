@@ -1,6 +1,14 @@
-# main.py
 import speech_recognition as sr
 from pronunciation_rules import PRONUNCIATION_RULES
+import nltk
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+
+# NLTK 'punkt' 리소스 다운로드
+nltk.download('punkt')
+
+# NLTK 'stopwords' 리소스 다운로드
+nltk.download('stopwords')
 
 # 음성 인식기 생성
 r = sr.Recognizer()
@@ -19,8 +27,18 @@ try:
     text = text.lower().strip()
     for key, value in PRONUNCIATION_RULES.items():
         text = text.replace(key, value)
-
-    print("처리된 텍스트: " + text)
+    
+    # NLTK를 활용한 텍스트 처리
+    tokens = nltk.word_tokenize(text)
+    stop_words = set(stopwords.words('korean'))
+    filtered_tokens = [word for word in tokens if word.lower() not in stop_words]
+    
+    stemmer = PorterStemmer()
+    stemmed_tokens = [stemmer.stem(word) for word in filtered_tokens]
+    
+    processed_text = ' '.join(stemmed_tokens)
+    
+    print("처리된 텍스트: " + processed_text)
 
 except sr.RequestError as e:
     print("Google 음성 인식 서비스에 연결할 수 없습니다: {0}".format(e))
