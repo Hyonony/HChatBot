@@ -1,4 +1,6 @@
+# main.py
 import speech_recognition as sr
+from pronunciation_rules import PRONUNCIATION_RULES
 
 # 음성 인식기 생성
 r = sr.Recognizer()
@@ -15,9 +17,8 @@ try:
     
     # 노이즈 제거 및 발음 보정
     text = text.lower().strip()
-    text = text.replace("ㅋ", "")
-    text = text.replace("ㅠ", "")
-    text = text.replace("ㅜ", "")
+    for key, value in PRONUNCIATION_RULES.items():
+        text = text.replace(key, value)
 
     print("처리된 텍스트: " + text)
 
